@@ -1,0 +1,312 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap');
+
+  .dil-root { padding: 1.5rem 0; font-family: var(--font-sans); }
+
+  .dil-date {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+    margin-bottom: 0.25rem;
+  }
+
+  .dil-headline {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 26px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--color-text-primary);
+    margin: 0 0 0.25rem;
+    line-height: 1.25;
+  }
+
+  .dil-subline {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin-bottom: 1.75rem;
+  }
+
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+
+  .event-row {
+    display: grid;
+    grid-template-columns: 64px 20px 1fr;
+    gap: 0 12px;
+    align-items: stretch;
+    position: relative;
+  }
+
+  .event-time {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    text-align: right;
+    padding-top: 14px;
+    white-space: nowrap;
+  }
+
+  .track {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 17px;
+    border: 1.5px solid;
+  }
+
+  .line {
+    width: 1px;
+    flex: 1;
+    min-height: 12px;
+    background: var(--color-border-tertiary);
+  }
+
+  .event-card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+    position: relative;
+  }
+
+  .event-card:hover { border-color: var(--color-border-secondary); }
+
+  .event-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin: 0 0 2px;
+  }
+
+  .event-poem {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .event-meta {
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    margin-top: 5px;
+  }
+
+  .dot-focus  { border-color: #EA6A47; background: #EA6A47; }
+  .dot-meet   { border-color: #185FA5; background: #185FA5; }
+  .dot-break  { border-color: #1D9E75; background: #1D9E75; }
+  .dot-event  { border-color: #BA7517; background: #BA7517; }
+  .dot-busy   { border-color: var(--color-text-tertiary); background: var(--color-background-secondary); }
+
+  .pill {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+
+  .pill-focus  { background: #FAECE7; color: #993C1D; }
+  .pill-meet   { background: #E6F1FB; color: #185FA5; }
+  .pill-break  { background: #E1F5EE; color: #0F6E56; }
+  .pill-event  { background: #FAEEDA; color: #854F0B; }
+  .pill-busy   { background: var(--color-background-secondary); color: var(--color-text-tertiary); }
+
+  .narrative-box {
+    border-top: 0.5px solid var(--color-border-tertiary);
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+  }
+
+  .narrative-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+    margin-bottom: 0.75rem;
+  }
+
+  .narrative-text {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-style: italic;
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--color-text-primary);
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 1.5rem;
+  }
+
+  .stat-card {
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 10px 12px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    margin: 0 0 3px;
+  }
+
+  .stat-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+</style>
+
+<h2 class="sr-only">Riz's day in the life — Wednesday 8 April 2026. Eight calendar events rendered as a poetic timeline.</h2>
+
+<div class="dil-root">
+  <p class="dil-date">Wednesday · 8 April 2026 · Tallinn</p>
+  <h1 class="dil-headline">A day in the life of building something real</h1>
+  <p class="dil-subline">8 events · from the quiet morning block to the late-night learning sprint</p>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <p class="stat-label">Focus hours</p>
+      <div class="stat-val">7h</div>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">Meetings</p>
+      <div class="stat-val">4</div>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">People</p>
+      <div class="stat-val">7+</div>
+    </div>
+  </div>
+
+  <div class="timeline" id="timeline"></div>
+
+  <div class="narrative-box">
+    <p class="narrative-label">The full arc</p>
+    <p class="narrative-text" id="full-narrative"></p>
+  </div>
+</div>
+
+<script>
+const events = [
+  {
+    time: "5:00",
+    end: "12:00",
+    title: "No meetings",
+    type: "focus",
+    poem: "Seven hours held sacred. The morning belongs to the work.",
+    meta: "Protected deep work block"
+  },
+  {
+    time: "11:00",
+    end: "12:00",
+    title: "Daily Leadership Sync",
+    type: "meet",
+    poem: "Riz, Umair, Mahad — three minds aligned before noon breaks the peace.",
+    meta: "With Umair & Mahad · ClickUp doc linked"
+  },
+  {
+    time: "12:00",
+    end: "13:00",
+    title: "Busy",
+    type: "busy",
+    poem: "A quiet hour marked but unnamed. The calendar, politely, keeps its secrets.",
+    meta: "Personal block"
+  },
+  {
+    time: "15:15",
+    end: "16:25",
+    title: "Riz ↔ Ahmad",
+    type: "meet",
+    poem: "Across time zones, two people find an hour and make it count.",
+    meta: "With Ahmad · Organised by Ahmad"
+  },
+  {
+    time: "17:00",
+    end: "18:00",
+    title: "Social Media — Weekly Sync",
+    type: "meet",
+    poem: "Mahad gathers the content crew. What gets made, what gets posted, what moves the needle.",
+    meta: "With Mahad, Amna, Abeeha + team · Optional for Riz & Umair"
+  },
+  {
+    time: "21:30",
+    end: "22:00",
+    title: "Busy",
+    type: "busy",
+    poem: "Evening holds another unnamed block. Wind-down, or wind-up — who can say.",
+    meta: "Personal block"
+  },
+  {
+    time: "22:00",
+    end: "22:50",
+    title: "How to Build an AI-Native Team",
+    type: "event",
+    poem: "The day ends as it means to go on — learning in public, from people doing the work.",
+    meta: "ClickUp webinar · 50 mins · Goldcast event"
+  },
+  {
+    time: "23:00",
+    end: "23:30",
+    title: "Busy",
+    type: "busy",
+    poem: "A final half-hour set aside. The day does not end abruptly — it tucks itself in.",
+    meta: "Personal block"
+  }
+];
+
+const typeMap = {
+  focus: { dot: "dot-focus", pill: "pill-focus", label: "Focus" },
+  meet:  { dot: "dot-meet",  pill: "pill-meet",  label: "Meeting" },
+  busy:  { dot: "dot-busy",  pill: "pill-busy",  label: "Block" },
+  event: { dot: "dot-event", pill: "pill-event", label: "Event" }
+};
+
+const tl = document.getElementById("timeline");
+
+events.forEach((ev, i) => {
+  const tm = typeMap[ev.type];
+  const isLast = i === events.length - 1;
+
+  const row = document.createElement("div");
+  row.className = "event-row";
+
+  row.innerHTML = `
+    <div class="event-time">${ev.time}</div>
+    <div class="track">
+      <div class="dot ${tm.dot}"></div>
+      ${!isLast ? '<div class="line"></div>' : ''}
+    </div>
+    <div class="event-card">
+      <span class="pill ${tm.pill}">${tm.label}</span>
+      <p class="event-title">${ev.title}</p>
+      <p class="event-poem">${ev.poem}</p>
+      <p class="event-meta">${ev.meta}</p>
+    </div>
+  `;
+
+  tl.appendChild(row);
+});
+
+document.getElementById("full-narrative").textContent =
+  "The day starts with a gift — seven hours of protected quiet before the world arrives. Then the team assembles: Riz, Umair, Mahad in the daily leadership sync, the first of four conversations that will stitch the afternoon together. A noon block, unnamed and private, passes. Mid-afternoon, Ahmad organised something worth showing up for. The social media crew gathers — Mahad runs it, the content engine turns. The evening comes quietly, with two short blocks bookending something bigger: a ClickUp webinar on building AI-native teams. The day ends with intention, not accident — a final half-hour tucked away. A Wednesday in Tallinn, building Soch one call at a time.";
+</script>
