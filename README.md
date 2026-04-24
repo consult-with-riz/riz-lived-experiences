@@ -13,3 +13,5 @@ From operations leadership across Careem, Bolt, Motive, and Wise, to co-founding
 https://consult-with-riz.github.io/riz-lived-experiences/tidal-memory.html
 
 https://consult-with-riz.github.io/riz-lived-experiences/riz_day_in_the_life_april8.html
+
+https://consult-with-riz.github.io/riz-lived-experiences/Riz-Contact
