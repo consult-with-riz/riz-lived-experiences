@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Riz — Automation Strategist</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --coral: #EA6A47;
+    --cream: #F5EFE0;
+    --charcoal: #2A2A2A;
+    --charcoal-mid: #4A4A4A;
+    --coral-light: #F4A88A;
+    --coral-dark: #C44E2E;
+    --cream-dark: #E8DFC8;
+    --off-white: #FDFAF4;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--charcoal);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--coral);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s ease;
+    mix-blend-mode: normal;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid var(--coral);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.25s ease, opacity 0.2s;
+    opacity: 0.5;
+  }
+
+  /* Nav */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 28px 60px;
+    mix-blend-mode: normal;
+  }
+  nav::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(42,42,42,0.9) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+    color: var(--cream);
+    text-decoration: none;
+    position: relative;
+    z-index: 1;
+  }
+  .nav-links {
+    display: flex; gap: 40px;
+    list-style: none;
+    position: relative; z-index: 1;
+  }
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--cream);
+    text-decoration: none;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+  .nav-links a:hover { opacity: 1; color: var(--coral); }
+
+  /* ─── HERO ─── */
+  #hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-left {
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    padding: 120px 60px 80px;
+    position: relative; z-index: 2;
+  }
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-bottom: 24px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(4rem, 7vw, 7rem);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    color: var(--cream);
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUp 0.9s 0.35s forwards;
+  }
+  .hero-name em {
+    font-style: italic;
+    color: var(--coral);
+  }
+  .hero-descriptor {
+    margin-top: 32px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--cream-dark);
+    opacity: 0;
+    animation: fadeUp 0.9s 0.6s forwards;
+    line-height: 2;
+  }
+  .hero-descriptor span {
+    display: inline-block;
+    border: 1px solid rgba(234,106,71,0.4);
+    padding: 3px 10px;
+    margin: 3px;
+    border-radius: 2px;
+    color: var(--coral-light);
+  }
+  .hero-cta-row {
+    margin-top: 48px;
+    display: flex; gap: 16px; align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.8s forwards;
+  }
+  .btn-primary {
+    background: var(--coral);
+    color: var(--charcoal);
+    padding: 14px 32px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: none;
+    transition: background 0.2s, transform 0.2s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--coral-dark); transform: translateY(-2px); }
+  .btn-ghost {
+    color: var(--cream);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 2px;
+  }
+  .btn-ghost:hover { opacity: 1; color: var(--coral); }
+
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-image-wrap {
+    position: absolute; inset: 0;
+    background: var(--charcoal-mid);
+  }
+  .hero-image-wrap::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(234,106,71,0.15) 0%, transparent 60%),
+                linear-gradient(to left, transparent 30%, var(--charcoal) 100%);
+  }
+  /* Abstract geometric avatar placeholder */
+  .hero-geo {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hero-geo svg { width: 100%; height: 100%; }
+
+  /* Scroll indicator */
+  .scroll-hint {
+    position: absolute; bottom: 40px; right: 60px;
+    display: flex; align-items: center; gap: 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--coral);
+    opacity: 0.6;
+    writing-mode: vertical-rl;
+    z-index: 3;
+    animation: fadeIn 1s 1.2s both;
+  }
+  .scroll-line {
+    width: 1px; height: 60px;
+    background: var(--coral);
+    transform-origin: top;
+    animation: growLine 1.5s 1.4s ease-out forwards;
+    transform: scaleY(0);
+  }
+
+  /* ─── MARQUEE ─── */
+  .marquee-wrap {
+    background: var(--coral);
+    overflow: hidden;
+    padding: 16px 0;
+  }
+  .marquee-track {
+    display: flex;
+    animation: marquee 18s linear infinite;
+    white-space: nowrap;
+  }
+  .marquee-item {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--charcoal);
+    padding: 0 40px;
+    flex-shrink: 0;
+  }
+  .marquee-dot {
+    color: var(--charcoal);
+    opacity: 0.3;
+  }
+
+  /* ─── ABOUT ─── */
+  #about {
+    padding: 140px 60px;
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 80px;
+    align-items: start;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .about-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-bottom: 32px;
+  }
+  .about-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 8rem;
+    font-weight: 900;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(245,239,224,0.1);
+    line-height: 1;
+    margin-top: -20px;
+  }
+  .about-body h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.4rem, 4vw, 3.6rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 32px;
+    color: var(--cream);
+  }
+  .about-body h2 em { font-style: italic; color: var(--coral); }
+  .about-body p {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    color: rgba(245,239,224,0.7);
+    margin-bottom: 20px;
+  }
+  .stat-row {
+    display: flex; gap: 48px;
+    margin-top: 48px;
+    border-top: 1px solid rgba(245,239,224,0.1);
+    padding-top: 40px;
+  }
+  .stat-item {}
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: var(--coral);
+    line-height: 1;
+  }
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(245,239,224,0.4);
+    margin-top: 6px;
+  }
+
+  /* ─── EXPERTISE ─── */
+  #expertise {
+    background: var(--off-white);
+    color: var(--charcoal);
+    padding: 120px 60px;
+  }
+  #expertise .section-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 80px;
+    max-width: 1400px; margin-left: auto; margin-right: auto;
+    padding-bottom: 80px;
+  }
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-bottom: 16px;
+  }
+  #expertise .section-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 4vw, 4rem);
+    font-weight: 900;
+    line-height: 1;
+    color: var(--charcoal);
+    letter-spacing: -0.03em;
+  }
+  #expertise .section-header h2 em { font-style: italic; color: var(--coral); }
+  .expertise-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    max-width: 1400px; margin: 0 auto;
+  }
+  .expertise-card {
+    background: var(--charcoal);
+    color: var(--cream);
+    padding: 52px 44px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    cursor: none;
+  }
+  .expertise-card:hover { transform: translateY(-6px); }
+  .expertise-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--coral);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .expertise-card:hover::before { transform: scaleX(1); }
+  .card-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85rem;
+    color: var(--coral);
+    margin-bottom: 28px;
+    font-style: italic;
+  }
+  .card-icon {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    display: block;
+  }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.55rem;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 16px;
+    color: var(--cream);
+  }
+  .card-desc {
+    font-size: 0.9rem;
+    line-height: 1.75;
+    color: rgba(245,239,224,0.55);
+  }
+  .card-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 28px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--coral);
+    text-decoration: none;
+  }
+  .card-link::after { content: '→'; }
+
+  /* ─── SPEAKING ─── */
+  #speaking {
+    padding: 140px 60px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .speaking-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .speaking-visual {
+    position: relative;
+    height: 520px;
+    background: var(--charcoal-mid);
+    overflow: hidden;
+  }
+  .speaking-visual::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(234,106,71,0.2), transparent 70%);
+  }
+  .speaking-stage {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .stage-quote {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-style: italic;
+    text-align: center;
+    padding: 0 40px;
+    color: var(--cream);
+    line-height: 1.5;
+    position: relative;
+    z-index: 1;
+  }
+  .stage-quote::before {
+    content: '"';
+    font-size: 6rem;
+    color: var(--coral);
+    opacity: 0.2;
+    position: absolute;
+    top: -40px; left: 20px;
+    line-height: 1;
+    font-family: 'Playfair Display', serif;
+  }
+  .stage-source {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--coral);
+    opacity: 0.8;
+  }
+  .speaking-topics {
+    margin-top: 40px;
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .topic-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: 1px solid rgba(234,106,71,0.4);
+    color: var(--coral-light);
+    padding: 6px 14px;
+    border-radius: 100px;
+  }
+  .speaking-content {}
+  .speaking-content h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 3.5vw, 3.2rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 28px;
+  }
+  .speaking-content h2 em { font-style: italic; color: var(--coral); }
+  .speaking-content p {
+    color: rgba(245,239,224,0.65);
+    line-height: 1.8;
+    font-size: 1rem;
+    margin-bottom: 16px;
+  }
+  .speaking-formats {
+    margin-top: 40px;
+    display: flex; flex-direction: column; gap: 1px;
+  }
+  .format-row {
+    display: flex; align-items: center; gap: 20px;
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(245,239,224,0.07);
+  }
+  .format-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    flex: 1;
+  }
+  .format-detail {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: rgba(245,239,224,0.35);
+    text-transform: uppercase;
+  }
+
+  /* ─── PROCESS ─── */
+  #process {
+    background: var(--cream);
+    color: var(--charcoal);
+    padding: 140px 60px;
+  }
+  .process-inner {
+    max-width: 1400px; margin: 0 auto;
+  }
+  .process-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    margin-bottom: 80px;
+    align-items: end;
+  }
+  .process-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 4vw, 4rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .process-header h2 em { font-style: italic; color: var(--coral); }
+  .process-header p {
+    color: rgba(42,42,42,0.6);
+    line-height: 1.8;
+    font-size: 1rem;
+    align-self: end;
+  }
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+  }
+  .process-step {
+    background: var(--charcoal);
+    color: var(--cream);
+    padding: 44px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .process-step:nth-child(even) {
+    background: var(--coral);
+    color: var(--charcoal);
+  }
+  .step-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.8rem;
+    font-style: italic;
+    opacity: 0.5;
+    margin-bottom: 40px;
+  }
+  .step-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 14px;
+  }
+  .step-desc {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    opacity: 0.65;
+  }
+  .process-step:nth-child(even) .step-desc { opacity: 0.75; }
+
+  /* ─── TOOLS ─── */
+  #tools {
+    padding: 120px 60px;
+    max-width: 1400px; margin: 0 auto;
+  }
+  .tools-header {
+    text-align: center;
+    margin-bottom: 72px;
+  }
+  .tools-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .tools-header h2 em { font-style: italic; color: var(--coral); }
+  .tools-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+  .tool-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: rgba(245,239,224,0.05);
+    border: 1px solid rgba(245,239,224,0.12);
+    padding: 12px 22px;
+    color: var(--cream-dark);
+    transition: all 0.2s;
+    cursor: none;
+  }
+  .tool-tag:hover {
+    background: var(--coral);
+    border-color: var(--coral);
+    color: var(--charcoal);
+    transform: translateY(-3px);
+  }
+
+  /* ─── CONTACT ─── */
+  #contact {
+    background: var(--charcoal);
+    padding: 140px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  #contact::before {
+    content: 'LET\'S BUILD';
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(5rem, 15vw, 16rem);
+    font-weight: 900;
+    font-style: italic;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(234,106,71,0.1);
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    pointer-events: none;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  .contact-inner {
+    position: relative; z-index: 1;
+    max-width: 700px; margin: 0 auto;
+  }
+  .contact-inner h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 5vw, 5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+  }
+  .contact-inner h2 em { font-style: italic; color: var(--coral); }
+  .contact-inner p {
+    color: rgba(245,239,224,0.6);
+    font-size: 1rem;
+    line-height: 1.8;
+    margin-bottom: 48px;
+  }
+  .contact-email {
+    display: inline-block;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+    color: var(--coral);
+    text-decoration: none;
+    border-bottom: 1px solid var(--coral);
+    padding-bottom: 4px;
+    transition: opacity 0.2s;
+  }
+  .contact-email:hover { opacity: 0.7; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: #1A1A1A;
+    padding: 40px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(245,239,224,0.05);
+  }
+  footer p {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    color: rgba(245,239,224,0.25);
+    text-transform: uppercase;
+  }
+  .footer-links {
+    display: flex; gap: 32px;
+  }
+  .footer-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(245,239,224,0.25);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--coral); }
+
+  /* Animations */
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    to { opacity: 0.6; }
+  }
+  @keyframes growLine {
+    to { transform: scaleY(1); }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* Scroll-reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Nav -->
+<nav>
+  <a href="#" class="nav-logo">Riz.</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#expertise">Work</a></li>
+    <li><a href="#speaking">Speaking</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section id="hero">
+  <div class="hero-left">
+    <p class="hero-tag">Automation Strategist · Speaker · Coach</p>
+    <h1 class="hero-name">Riz<br/><em>automates</em><br/>what holds<br/>you back.</h1>
+    <div class="hero-descriptor">
+      <span>n8n</span>
+      <span>AI Workflows</span>
+      <span>B2B Ops</span>
+      <span>Fractional PM</span>
+      <span>Anthropic API</span>
+    </div>
+    <div class="hero-cta-row">
+      <a href="#contact" class="btn-primary">Work With Me</a>
+      <a href="#expertise" class="btn-ghost">See my work</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-image-wrap">
+      <div class="hero-geo">
+        <svg viewBox="0 0 700 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="glow" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#EA6A47" stop-opacity="0.25"/>
+              <stop offset="100%" stop-color="#2A2A2A" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect width="700" height="900" fill="#3A3A3A"/>
+          <rect width="700" height="900" fill="url(#glow)"/>
+          <!-- Grid lines -->
+          <line x1="0" y1="150" x2="700" y2="150" stroke="#EA6A47" stroke-opacity="0.06" stroke-width="1"/>
+          <line x1="0" y1="300" x2="700" y2="300" stroke="#EA6A47" stroke-opacity="0.06" stroke-width="1"/>
+          <line x1="0" y1="450" x2="700" y2="450" stroke="#EA6A47" stroke-opacity="0.06" stroke-width="1"/>
+          <line x1="0" y1="600" x2="700" y2="600" stroke="#EA6A47" stroke-opacity="0.06" stroke-width="1"/>
+          <line x1="0" y1="750" x2="700" y2="750" stroke="#EA6A47" stroke-opacity="0.06" stroke-width="1"/>
+          <line x1="175" y1="0" x2="175" y2="900" stroke="#EA6A47" stroke-opacity="0.06" stroke-width="1"/>
+          <line x1="350" y1="0" x2="350" y2="900" stroke="#EA6A47" stroke-opacity="0.06" stroke-width="1"/>
+          <line x1="525" y1="0" x2="525" y2="900" stroke="#EA6A47" stroke-opacity="0.06" stroke-width="1"/>
+          <!-- Geometric shapes -->
+          <circle cx="350" cy="380" r="180" fill="none" stroke="#EA6A47" stroke-opacity="0.15" stroke-width="1"/>
+          <circle cx="350" cy="380" r="120" fill="none" stroke="#EA6A47" stroke-opacity="0.2" stroke-width="0.5"/>
+          <circle cx="350" cy="380" r="60" fill="#EA6A47" fill-opacity="0.12"/>
+          <!-- Nodes -->
+          <circle cx="350" cy="200" r="8" fill="#EA6A47" fill-opacity="0.7">
+            <animate attributeName="r" values="8;12;8" dur="3s" repeatCount="indefinite"/>
+            <animate attributeName="fill-opacity" values="0.7;1;0.7" dur="3s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="530" cy="320" r="6" fill="#EA6A47" fill-opacity="0.5">
+            <animate attributeName="r" values="6;10;6" dur="4s" begin="1s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="480" cy="520" r="6" fill="#EA6A47" fill-opacity="0.5">
+            <animate attributeName="r" values="6;10;6" dur="3.5s" begin="0.5s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="220" cy="520" r="6" fill="#EA6A47" fill-opacity="0.5">
+            <animate attributeName="r" values="6;10;6" dur="4.5s" begin="1.5s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="170" cy="320" r="6" fill="#EA6A47" fill-opacity="0.5">
+            <animate attributeName="r" values="6;10;6" dur="3.8s" begin="0.8s" repeatCount="indefinite"/>
+          </circle>
+          <!-- Connectors -->
+          <line x1="350" y1="200" x2="530" y2="320" stroke="#EA6A47" stroke-opacity="0.2" stroke-width="1"/>
+          <line x1="530" y1="320" x2="480" y2="520" stroke="#EA6A47" stroke-opacity="0.2" stroke-width="1"/>
+          <line x1="480" y1="520" x2="220" y2="520" stroke="#EA6A47" stroke-opacity="0.2" stroke-width="1"/>
+          <line x1="220" y1="520" x2="170" y2="320" stroke="#EA6A47" stroke-opacity="0.2" stroke-width="1"/>
+          <line x1="170" y1="320" x2="350" y2="200" stroke="#EA6A47" stroke-opacity="0.2" stroke-width="1"/>
+          <!-- Travelling dot -->
+          <circle r="4" fill="#EA6A47">
+            <animateMotion dur="8s" repeatCount="indefinite">
+              <mpath xlink:href="#path1"/>
+            </animateMotion>
+          </circle>
+          <path id="path1" d="M350,200 L530,320 L480,520 L220,520 L170,320 Z" fill="none"/>
+          <!-- Bottom label -->
+          <text x="350" y="820" text-anchor="middle" font-family="'DM Mono', monospace" font-size="11" fill="#F5EFE0" fill-opacity="0.25" letter-spacing="4">BUILDING THE FUTURE OF WORK</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    Scroll
+  </div>
+</section>
+
+<!-- ─── MARQUEE ─── -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item">Automation Strategist</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">Operations Leader</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">n8n Builder</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">AI Workflow Architect</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">Fractional PM</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">Startup Advisor</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">Keynote Speaker</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">Thought Leader</span><span class="marquee-dot">·</span>
+    <!-- duplicate for seamless loop -->
+    <span class="marquee-item">Automation Strategist</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">Operations Leader</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">n8n Builder</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">AI Workflow Architect</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">Fractional PM</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">Startup Advisor</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">Keynote Speaker</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">Thought Leader</span><span class="marquee-dot">·</span>
+  </div>
+</div>
+
+<!-- ─── ABOUT ─── -->
+<section id="about">
+  <div>
+    <p class="about-label reveal">01 — About</p>
+    <div class="about-number reveal">Riz</div>
+  </div>
+  <div class="about-body reveal">
+    <h2>I help founders <em>reclaim their time</em> through smart automation.</h2>
+    <p>I've scaled operations across four continents — Careem, Bolt, Motive, Wise — and I've seen the same pattern everywhere: talented founders buried in manual work that a well-built automation could handle in seconds.</p>
+    <p>Now I build the systems that free them. From n8n workflows to AI-powered pipelines, I combine deep operational experience with cutting-edge tooling to turn inefficiency into leverage.</p>
+    <p>Based in Tallinn, Estonia. Working with early-stage B2B startups globally.</p>
+    <div class="stat-row">
+      <div class="stat-item">
+        <div class="stat-num">4+</div>
+        <div class="stat-label">Continents worked</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">10+</div>
+        <div class="stat-label">Yrs in ops & product</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">50+</div>
+        <div class="stat-label">Automations shipped</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── EXPERTISE ─── -->
+<section id="expertise">
+  <div class="section-header">
+    <div>
+      <p class="section-label reveal">02 — Expertise</p>
+      <h2 class="reveal">What I <em>actually</em><br/>do for you.</h2>
+    </div>
+  </div>
+  <div class="expertise-grid">
+    <div class="expertise-card reveal">
+      <div class="card-num">01.</div>
+      <span class="card-icon">⚙️</span>
+      <h3 class="card-title">Automation<br/>Architecture</h3>
+      <p class="card-desc">End-to-end workflow design using n8n, Anthropic API, and OpenAI. From lead capture to delivery, I map and automate every manual touchpoint in your business.</p>
+      <a href="#contact" class="card-link">Get a workflow audit</a>
+    </div>
+    <div class="expertise-card reveal">
+      <div class="card-num">02.</div>
+      <span class="card-icon">🧠</span>
+      <h3 class="card-title">AI Product<br/>Strategy</h3>
+      <p class="card-desc">Fractional PM for AI-native startups. I bring structured operational thinking to chaotic early-stage product development — roadmaps, agent specs, stakeholder alignment.</p>
+      <a href="#contact" class="card-link">Explore fractional PM</a>
+    </div>
+    <div class="expertise-card reveal">
+      <div class="card-num">03.</div>
+      <span class="card-icon">📢</span>
+      <h3 class="card-title">LinkedIn<br/>Brand Systems</h3>
+      <p class="card-desc">Automated personal brand pipelines for founders. Comment workflows, content cadences, thought leadership — built to scale without your daily involvement.</p>
+      <a href="#contact" class="card-link">Build your brand</a>
+    </div>
+    <div class="expertise-card reveal">
+      <div class="card-num">04.</div>
+      <span class="card-icon">🚀</span>
+      <h3 class="card-title">Startup Ops<br/>Advisory</h3>
+      <p class="card-desc">Operations-as-a-Service for pre-seed to Series A. I install the processes, playbooks, and tooling that let you scale without breaking everything.</p>
+      <a href="#contact" class="card-link">Talk ops</a>
+    </div>
+    <div class="expertise-card reveal">
+      <div class="card-num">05.</div>
+      <span class="card-icon">🎤</span>
+      <h3 class="card-title">Keynotes &<br/>Workshops</h3>
+      <p class="card-desc">High-energy sessions on the future of work, AI automation in real businesses, and how founders can operate like companies ten times their size.</p>
+      <a href="#contact" class="card-link">Book a session</a>
+    </div>
+    <div class="expertise-card reveal">
+      <div class="card-num">06.</div>
+      <span class="card-icon">🏗️</span>
+      <h3 class="card-title">Custom<br/>Builds</h3>
+      <p class="card-desc">Fixed-scope automation projects at $2K–$5K. Proven systems for lead gen, outreach, SEO pipelines, and internal ops — delivered in weeks, not months.</p>
+      <a href="#contact" class="card-link">Start a build</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SPEAKING ─── -->
+<section id="speaking">
+  <div class="speaking-inner">
+    <div class="speaking-visual reveal">
+      <div class="speaking-stage">
+        <p class="stage-quote">The next decade belongs to founders who automate like engineers and think like operators.</p>
+        <p class="stage-source">— Riz, on the future of startup operations</p>
+      </div>
+    </div>
+
+    <div class="speaking-content reveal">
+      <p class="about-label">03 — Speaking</p>
+      <h2>I speak to <em>founders</em> who are ready to build differently.</h2>
+      <p>From startup conferences to intimate founder roundtables, I talk about what actually moves the needle: automating the right things, building AI-native systems, and reclaiming founder time through operational leverage.</p>
+      <p>No fluff. No theory. Real systems I've built and shipped.</p>
+
+      <div class="speaking-formats">
+        <div class="format-row">
+          <span class="format-name">Keynote</span>
+          <span class="format-detail">30–60 min · Conference or Corporate</span>
+        </div>
+        <div class="format-row">
+          <span class="format-name">Workshop</span>
+          <span class="format-detail">Half-day · Hands-on Build Session</span>
+        </div>
+        <div class="format-row">
+          <span class="format-name">Panel</span>
+          <span class="format-detail">AI, Automation, Future of Work</span>
+        </div>
+        <div class="format-row">
+          <span class="format-name">Podcast</span>
+          <span class="format-detail">Startup Ops · Founder Productivity</span>
+        </div>
+      </div>
+
+      <div class="speaking-topics">
+        <span class="topic-pill">Agentic Workflows</span>
+        <span class="topic-pill">AI in Ops</span>
+        <span class="topic-pill">Founder Leverage</span>
+        <span class="topic-pill">n8n</span>
+        <span class="topic-pill">No-Code Automation</span>
+        <span class="topic-pill">Future of Work</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PROCESS ─── -->
+<section id="process">
+  <div class="process-inner">
+    <div class="process-header">
+      <div>
+        <p class="section-label reveal" style="color:var(--coral)">04 — Process</p>
+        <h2 class="reveal">How we <em>work</em><br/>together.</h2>
+      </div>
+      <p class="reveal">Every engagement starts with a diagnosis. I don't guess — I map, I audit, I build with precision. The result is a system that runs without you.</p>
+    </div>
+    <div class="process-steps">
+      <div class="process-step reveal">
+        <div class="step-num">01.</div>
+        <div class="step-title">Discover &<br/>Diagnose</div>
+        <p class="step-desc">Deep-dive into your current operations. I identify where time is being lost and where automation creates the highest leverage.</p>
+      </div>
+      <div class="process-step reveal">
+        <div class="step-num">02.</div>
+        <div class="step-title">Map &<br/>Architect</div>
+        <p class="step-desc">I design the full workflow architecture — nodes, logic, decision trees — before a single line is written. No surprises later.</p>
+      </div>
+      <div class="process-step reveal">
+        <div class="step-num">03.</div>
+        <div class="step-title">Build &<br/>Test</div>
+        <p class="step-desc">I build in n8n with live testing at every step. You see it working, not just described. Feedback is baked into the build cycle.</p>
+      </div>
+      <div class="process-step reveal">
+        <div class="step-num">04.</div>
+        <div class="step-title">Hand Over &<br/>Scale</div>
+        <p class="step-desc">Full documentation, training, and a clean handover. You own it. I'm available to expand as your business grows.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TOOLS ─── -->
+<section id="tools">
+  <div class="tools-header reveal">
+    <p class="about-label">05 — Stack</p>
+    <h2>Built with the <em>sharpest</em> tools.</h2>
+  </div>
+  <div class="tools-grid reveal">
+    <span class="tool-tag">n8n</span>
+    <span class="tool-tag">Anthropic API</span>
+    <span class="tool-tag">OpenAI API</span>
+    <span class="tool-tag">ClickUp</span>
+    <span class="tool-tag">Apify</span>
+    <span class="tool-tag">Webflow</span>
+    <span class="tool-tag">Airtable</span>
+    <span class="tool-tag">Google Sheets</span>
+    <span class="tool-tag">Slack</span>
+    <span class="tool-tag">Make</span>
+    <span class="tool-tag">Zapier</span>
+    <span class="tool-tag">Notion</span>
+    <span class="tool-tag">HubSpot</span>
+    <span class="tool-tag">Linear</span>
+    <span class="tool-tag">Supabase</span>
+    <span class="tool-tag">PostgreSQL</span>
+    <span class="tool-tag">Figma</span>
+    <span class="tool-tag">GitHub</span>
+  </div>
+</section>
+
+<!-- ─── CONTACT ─── -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="reveal">
+      <p class="about-label" style="color:var(--coral)">06 — Let's Talk</p>
+      <h2>Ready to <em>automate</em> your edge?</h2>
+      <p>Whether you need a full automation build, a keynote speaker, or a fractional PM who ships fast — I'm one email away.</p>
+      <a href="mailto:riz@withsoch.com" class="contact-email">riz@withsoch.com</a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>© 2026 Riz · Tallinn, Estonia</p>
+  <div class="footer-links">
+    <a href="https://withsoch.com" target="_blank">Soch</a>
+    <a href="#">LinkedIn</a>
+    <a href="#">Twitter/X</a>
+  </div>
+</footer>
+
+<script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.transform = `translate(${mx - 6}px, ${my - 6}px)`;
+  });
+  function animRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.transform = `translate(${rx - 18}px, ${ry - 18}px)`;
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(r => obs.observe(r));
+</script>
+
+</body>
+</html>
