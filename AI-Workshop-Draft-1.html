@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vibe Coding Foundations — A one-day workshop by Soch</title>
+<meta name="description" content="A one-day workshop that takes founders and operators from never having coded to shipping a working tool. With AI doing the heavy lifting." />
+
+<!-- ============================================================ -->
+<!-- HANDOFF NOTES FOR WEBFLOW DEV:                                -->
+<!-- 1. Replace [APPLY_LINK] with your Stripe / Tally / Typeform URL -->
+<!-- 2. Replace dates in [COHORT_DATE] placeholders                 -->
+<!-- 3. The CSS variables at top of <style> drive the whole palette -->
+<!-- 4. Sections are clearly named with semantic class prefixes:    -->
+<!--    .nav, .hero, .proof, .problem, .audience, .build, .curriculum, -->
+<!--    .format, .facilitator, .pricing, .faq, .final-cta, .footer  -->
+<!-- 5. Fonts: Instrument Serif (display) + DM Sans (body)          -->
+<!--    Both Google Fonts, free for Webflow embed                   -->
+<!-- ============================================================ -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* =========================================================
+   DESIGN TOKENS — change here to retheme everything
+   ========================================================= */
+:root {
+  --coral: #EA6A47;
+  --coral-dark: #C44E2E;
+  --cream: #F5EFE0;
+  --cream-deep: #ECE4D0;
+  --charcoal: #4A4A4A;
+  --charcoal-deep: #2A2A2A;
+  --line: rgba(74, 74, 74, 0.15);
+  --line-strong: rgba(74, 74, 74, 0.35);
+
+  --display: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
+  --body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --container: 1200px;
+  --gutter: clamp(1.25rem, 4vw, 2.5rem);
+}
+
+/* =========================================================
+   RESET + BASE
+   ========================================================= */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--charcoal);
+  background: var(--cream);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+.container {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+/* =========================================================
+   TYPOGRAPHY UTILITIES
+   ========================================================= */
+.eyebrow {
+  font-family: var(--body);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--coral);
+}
+.display-1 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2.75rem, 7vw, 5.75rem);
+  line-height: 0.98;
+  letter-spacing: -0.015em;
+  color: var(--charcoal-deep);
+}
+.display-1 em {
+  font-style: italic;
+  color: var(--coral);
+}
+.display-2 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2rem, 5vw, 3.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  color: var(--charcoal-deep);
+}
+.display-2 em {
+  font-style: italic;
+  color: var(--coral);
+}
+.display-3 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  line-height: 1.1;
+  color: var(--charcoal-deep);
+}
+.lede {
+  font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+  line-height: 1.5;
+  color: var(--charcoal);
+  max-width: 60ch;
+}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1rem 1.6rem;
+  font-family: var(--body);
+  font-weight: 500;
+  font-size: 0.95rem;
+  border-radius: 999px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: var(--coral);
+  color: var(--cream);
+  box-shadow: 0 4px 0 var(--coral-dark);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 var(--coral-dark);
+}
+.btn-primary:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--coral-dark);
+}
+.btn-ghost {
+  border: 1px solid var(--line-strong);
+  color: var(--charcoal);
+}
+.btn-ghost:hover {
+  background: var(--charcoal-deep);
+  color: var(--cream);
+  border-color: var(--charcoal-deep);
+}
+.btn .arrow {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+.btn:hover .arrow { transform: translateX(3px); }
+
+/* =========================================================
+   NAV
+   ========================================================= */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(245, 239, 224, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 0;
+}
+.brand {
+  font-family: var(--display);
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+  color: var(--charcoal-deep);
+}
+.brand-mark {
+  color: var(--coral);
+  font-style: italic;
+}
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  font-size: 0.92rem;
+  color: var(--charcoal);
+}
+.nav-links a {
+  position: relative;
+  padding: 0.25rem 0;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -2px;
+  height: 1px;
+  background: var(--coral);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+.nav-links a:hover::after { transform: scaleX(1); }
+.nav-cta { padding: 0.65rem 1.2rem; font-size: 0.9rem; }
+@media (max-width: 720px) {
+  .nav-links { display: none; }
+}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+.hero {
+  padding: clamp(4rem, 10vw, 8rem) 0 clamp(3rem, 7vw, 5rem);
+  position: relative;
+  overflow: hidden;
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+@media (min-width: 960px) {
+  .hero-grid { grid-template-columns: 1.4fr 1fr; gap: 5rem; }
+}
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 1.75rem;
+  padding: 0.4rem 0.9rem;
+  background: rgba(234, 106, 71, 0.1);
+  border-radius: 999px;
+  border: 1px solid rgba(234, 106, 71, 0.25);
+}
+.hero-eyebrow .dot {
+  width: 6px; height: 6px;
+  background: var(--coral);
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.3); }
+}
+.hero h1 {
+  margin-bottom: 1.75rem;
+}
+.hero .lede {
+  margin-bottom: 2.25rem;
+}
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-bottom: 2.5rem;
+}
+.hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.92rem;
+  color: var(--charcoal);
+}
+.hero-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.hero-meta-item strong {
+  font-weight: 500;
+  color: var(--charcoal-deep);
+}
+.hero-meta-item .icon {
+  color: var(--coral);
+}
+
+/* Hero visual card — the "what you'll do" stack */
+.hero-visual {
+  position: relative;
+  aspect-ratio: 1 / 1.15;
+  max-width: 480px;
+  margin-left: auto;
+}
+.proof-card {
+  position: absolute;
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1.25rem 1.4rem;
+  box-shadow: 0 8px 24px rgba(74, 74, 74, 0.06);
+  font-size: 0.9rem;
+}
+.proof-card-1 {
+  top: 0; left: 0;
+  width: 78%;
+  background: var(--charcoal-deep);
+  color: var(--cream);
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.proof-card-1 .prompt { color: var(--coral); }
+.proof-card-1 .comment { color: rgba(245, 239, 224, 0.5); }
+.proof-card-2 {
+  top: 38%; right: 0;
+  width: 70%;
+  transform: rotate(2deg);
+}
+.proof-card-2 .label {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--coral);
+  margin-bottom: 0.5rem;
+}
+.proof-card-2 strong {
+  font-family: var(--display);
+  font-size: 1.6rem;
+  font-weight: 400;
+  color: var(--charcoal-deep);
+  display: block;
+  line-height: 1.1;
+  margin-bottom: 0.3rem;
+}
+.proof-card-3 {
+  bottom: 0; left: 8%;
+  width: 65%;
+  transform: rotate(-1.5deg);
+  background: var(--coral);
+  color: var(--cream);
+  border: none;
+}
+.proof-card-3 .display-quote {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 1.15rem;
+  line-height: 1.3;
+}
+@media (max-width: 960px) {
+  .hero-visual { max-width: 100%; aspect-ratio: 1 / 1; }
+}
+
+/* =========================================================
+   PROOF STRIP
+   ========================================================= */
+.proof {
+  padding: 2rem 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--cream-deep);
+}
+.proof-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+.proof-label {
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--charcoal);
+  opacity: 0.7;
+}
+.proof-logos {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  font-family: var(--display);
+  font-size: 1.35rem;
+  color: var(--charcoal-deep);
+  letter-spacing: -0.01em;
+}
+.proof-logos span { opacity: 0.7; }
+
+/* =========================================================
+   PROBLEM
+   ========================================================= */
+.problem {
+  padding: clamp(4rem, 9vw, 7rem) 0;
+}
+.problem-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+@media (min-width: 880px) {
+  .problem-grid { grid-template-columns: 1fr 1.2fr; gap: 5rem; }
+}
+.problem-stat {
+  font-family: var(--display);
+  font-size: clamp(4rem, 10vw, 7rem);
+  line-height: 0.95;
+  color: var(--coral);
+  letter-spacing: -0.02em;
+}
+.problem-stat-label {
+  font-size: 0.92rem;
+  color: var(--charcoal);
+  margin-top: 0.5rem;
+  max-width: 28ch;
+}
+.problem-copy p {
+  font-size: 1.15rem;
+  line-height: 1.55;
+  color: var(--charcoal-deep);
+  margin-bottom: 1rem;
+}
+.problem-copy p:last-child {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 1.5rem;
+  color: var(--coral);
+  margin-top: 1.5rem;
+}
+
+/* =========================================================
+   AUDIENCE — for / not for
+   ========================================================= */
+.audience {
+  padding: clamp(4rem, 9vw, 7rem) 0;
+  background: var(--charcoal-deep);
+  color: var(--cream);
+}
+.audience .display-2 {
+  color: var(--cream);
+  margin-bottom: 3rem;
+  max-width: 22ch;
+}
+.audience .display-2 em { color: var(--coral); }
+.audience-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+@media (min-width: 800px) {
+  .audience-grid { grid-template-columns: 1fr 1fr; gap: 4rem; }
+}
+.audience-col h3 {
+  font-family: var(--body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(245, 239, 224, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.audience-col.for h3 { color: var(--coral); }
+.audience-col.notfor h3 { color: rgba(245, 239, 224, 0.5); }
+.audience-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.audience-list li {
+  display: flex;
+  gap: 0.8rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: rgba(245, 239, 224, 0.85);
+}
+.audience-list .mark {
+  flex-shrink: 0;
+  width: 1.4rem;
+  font-family: var(--display);
+  font-size: 1.25rem;
+  line-height: 1.1;
+}
+.audience-col.for .mark { color: var(--coral); }
+.audience-col.notfor .mark { color: rgba(245, 239, 224, 0.4); }
+.audience-col.notfor li { color: rgba(245, 239, 224, 0.55); }
+
+/* =========================================================
+   BUILD — outcomes
+   ========================================================= */
+.build {
+  padding: clamp(4rem, 9vw, 7rem) 0;
+}
+.build-header {
+  margin-bottom: 4rem;
+  max-width: 50ch;
+}
+.build-header .eyebrow { margin-bottom: 1rem; }
+.build-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+@media (min-width: 720px) {
+  .build-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1000px) {
+  .build-grid { grid-template-columns: repeat(3, 1fr); }
+}
+.build-card {
+  position: relative;
+  padding: 2.25rem 1.75rem 2rem;
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.build-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(74, 74, 74, 0.08);
+  border-color: var(--coral);
+}
+.build-num {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 1.5rem;
+  color: var(--coral);
+  margin-bottom: 1.25rem;
+  display: block;
+}
+.build-card h3 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 1.5rem;
+  line-height: 1.15;
+  color: var(--charcoal-deep);
+  margin-bottom: 0.75rem;
+}
+.build-card p {
+  font-size: 0.95rem;
+  color: var(--charcoal);
+  line-height: 1.5;
+}
+.build-card .modules {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--line);
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--charcoal);
+  opacity: 0.7;
+}
+
+/* =========================================================
+   CURRICULUM
+   ========================================================= */
+.curriculum {
+  padding: clamp(4rem, 9vw, 7rem) 0;
+  background: var(--cream-deep);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.curriculum-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+@media (min-width: 800px) {
+  .curriculum-header {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 3rem;
+  }
+}
+.curriculum-header .display-2 { max-width: 16ch; }
+.curriculum-header p {
+  max-width: 38ch;
+  color: var(--charcoal);
+}
+.curriculum-list {
+  list-style: none;
+  border-top: 1px solid var(--line-strong);
+}
+.module {
+  border-bottom: 1px solid var(--line-strong);
+  padding: 1.75rem 0;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1.5rem;
+  align-items: baseline;
+  transition: padding-left 0.25s ease;
+}
+.module:hover { padding-left: 0.5rem; }
+.module-num {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 1.4rem;
+  color: var(--coral);
+  min-width: 2.5rem;
+}
+.module-content h3 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(1.35rem, 2.4vw, 1.7rem);
+  color: var(--charcoal-deep);
+  line-height: 1.15;
+  margin-bottom: 0.4rem;
+}
+.module-content p {
+  font-size: 0.95rem;
+  color: var(--charcoal);
+  max-width: 60ch;
+}
+.module-tag {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--charcoal);
+  opacity: 0.6;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+@media (max-width: 700px) {
+  .module {
+    grid-template-columns: auto 1fr;
+    gap: 0.75rem 1.25rem;
+  }
+  .module-tag {
+    grid-column: 2;
+    margin-top: 0.4rem;
+  }
+}
+
+/* =========================================================
+   FORMAT
+   ========================================================= */
+.format {
+  padding: clamp(4rem, 9vw, 7rem) 0;
+}
+.format-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+@media (min-width: 880px) {
+  .format-grid { grid-template-columns: 1fr 1fr; gap: 5rem; }
+}
+.format-card {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 2.25rem;
+  background: var(--cream);
+  position: relative;
+  overflow: hidden;
+}
+.format-card .label {
+  font-family: var(--body);
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--coral);
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+.format-card h3 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 1.85rem;
+  line-height: 1.1;
+  color: var(--charcoal-deep);
+  margin-bottom: 1.5rem;
+}
+.format-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+.format-list li {
+  display: flex;
+  gap: 0.8rem;
+  align-items: flex-start;
+  font-size: 0.95rem;
+  color: var(--charcoal);
+  line-height: 1.45;
+}
+.format-list li::before {
+  content: '→';
+  color: var(--coral);
+  font-family: var(--display);
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   FACILITATOR
+   ========================================================= */
+.facilitator {
+  padding: clamp(4rem, 9vw, 7rem) 0;
+  background: var(--cream-deep);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.facilitator-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+@media (min-width: 880px) {
+  .facilitator-grid {
+    grid-template-columns: 1fr 1.6fr;
+    gap: 5rem;
+  }
+}
+
+.facilitator-portrait {
+  aspect-ratio: 4 / 5;
+  max-width: 380px;
+  background: var(--coral);
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+  /* Replace with actual image: */
+  /* background-image: url('riz-portrait.jpg'); background-size: cover; background-position: center; */
+}
+.facilitator-portrait::after {
+  content: 'RIZ';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--display);
+  font-size: 5rem;
+  color: var(--cream);
+  letter-spacing: -0.04em;
+}
+.facilitator-name {
+  font-family: var(--display);
+  font-size: clamp(2rem, 3.5vw, 2.75rem);
+  line-height: 1.05;
+  color: var(--charcoal-deep);
+  margin-bottom: 0.4rem;
+}
+.facilitator-title {
+  font-size: 0.95rem;
+  color: var(--coral);
+  margin-bottom: 1.75rem;
+  font-weight: 500;
+}
+.facilitator-bio p {
+  font-size: 1.02rem;
+  color: var(--charcoal);
+  margin-bottom: 1rem;
+  line-height: 1.55;
+}
+.facilitator-bio em {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--charcoal-deep);
+}
+.facilitator-credits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.75rem;
+}
+.credit-pill {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  padding: 0.4rem 0.85rem;
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--charcoal);
+}
+
+/* =========================================================
+   PRICING
+   ========================================================= */
+.pricing {
+  padding: clamp(4rem, 9vw, 7rem) 0;
+}
+.pricing-header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+  max-width: 50ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+.pricing-header .display-2 { margin-bottom: 1rem; }
+.pricing-header p { color: var(--charcoal); }
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  max-width: 880px;
+  margin: 0 auto;
+}
+@media (min-width: 720px) {
+  .pricing-grid { grid-template-columns: 1fr 1fr; }
+}
+.price-card {
+  position: relative;
+  padding: 2.5rem 2rem;
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.price-card.featured {
+  background: var(--charcoal-deep);
+  color: var(--cream);
+  border-color: var(--charcoal-deep);
+}
+.price-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--coral);
+  color: var(--cream);
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.price-tier {
+  font-size: 0.85rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--coral);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+.price-card.featured .price-tier { color: var(--coral); }
+.price-amount {
+  font-family: var(--display);
+  font-size: 3.5rem;
+  line-height: 1;
+  color: var(--charcoal-deep);
+  margin-bottom: 0.4rem;
+}
+.price-card.featured .price-amount { color: var(--cream); }
+.price-amount .currency {
+  font-size: 1.5rem;
+  vertical-align: top;
+  margin-right: 0.15rem;
+}
+.price-meta {
+  font-size: 0.88rem;
+  color: var(--charcoal);
+  margin-bottom: 1.75rem;
+  opacity: 0.85;
+}
+.price-card.featured .price-meta { color: rgba(245, 239, 224, 0.7); }
+.price-includes {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin-bottom: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.92rem;
+}
+.price-card.featured .price-includes { border-top-color: rgba(245, 239, 224, 0.15); }
+.price-includes li {
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-start;
+}
+.price-includes li::before {
+  content: '✓';
+  color: var(--coral);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.price-card .btn {
+  width: 100%;
+  justify-content: center;
+}
+.price-card.featured .btn-ghost {
+  border-color: rgba(245, 239, 224, 0.3);
+  color: var(--cream);
+}
+.price-card.featured .btn-ghost:hover {
+  background: var(--cream);
+  color: var(--charcoal-deep);
+}
+
+.pricing-footnote {
+  text-align: center;
+  margin-top: 2.5rem;
+  font-size: 0.88rem;
+  color: var(--charcoal);
+  opacity: 0.7;
+}
+.pricing-footnote a {
+  color: var(--coral);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* =========================================================
+   FAQ
+   ========================================================= */
+.faq {
+  padding: clamp(4rem, 9vw, 7rem) 0;
+  background: var(--cream-deep);
+  border-top: 1px solid var(--line);
+}
+.faq-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+@media (min-width: 880px) {
+  .faq-grid { grid-template-columns: 1fr 1.6fr; gap: 5rem; }
+}
+.faq-list {
+  display: flex;
+  flex-direction: column;
+}
+.faq-item {
+  border-top: 1px solid var(--line-strong);
+  padding: 1.5rem 0;
+}
+.faq-item:last-child { border-bottom: 1px solid var(--line-strong); }
+.faq-q {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1.5rem;
+  font-family: var(--display);
+  font-size: 1.35rem;
+  font-weight: 400;
+  color: var(--charcoal-deep);
+  cursor: pointer;
+  list-style: none;
+  line-height: 1.2;
+}
+.faq-q::-webkit-details-marker { display: none; }
+.faq-q::after {
+  content: '+';
+  font-family: var(--display);
+  color: var(--coral);
+  font-size: 1.6rem;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+  line-height: 1;
+}
+.faq-item[open] .faq-q::after {
+  content: '−';
+  transform: rotate(180deg);
+}
+.faq-a {
+  margin-top: 1rem;
+  font-size: 0.98rem;
+  color: var(--charcoal);
+  line-height: 1.55;
+  max-width: 60ch;
+}
+.faq-a p { margin-bottom: 0.8rem; }
+.faq-a p:last-child { margin-bottom: 0; }
+
+/* =========================================================
+   FINAL CTA
+   ========================================================= */
+.final-cta {
+  padding: clamp(5rem, 11vw, 9rem) 0;
+  background: var(--coral);
+  color: var(--cream);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+.final-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(245, 239, 224, 0.15) 1px, transparent 0);
+  background-size: 24px 24px;
+  opacity: 0.5;
+}
+.final-cta .container { position: relative; }
+.final-cta .display-1 {
+  color: var(--cream);
+  margin-bottom: 1.5rem;
+  max-width: 16ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+.final-cta .display-1 em {
+  color: var(--charcoal-deep);
+  font-style: italic;
+}
+.final-cta p {
+  font-size: 1.15rem;
+  margin-bottom: 2.5rem;
+  opacity: 0.9;
+  max-width: 50ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+.final-cta .btn-primary {
+  background: var(--charcoal-deep);
+  color: var(--cream);
+  box-shadow: 0 4px 0 #1a1a1a;
+}
+.final-cta .btn-primary:hover {
+  box-shadow: 0 6px 0 #1a1a1a;
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+.footer {
+  padding: 3rem 0 2rem;
+  background: var(--charcoal-deep);
+  color: rgba(245, 239, 224, 0.7);
+  font-size: 0.88rem;
+}
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer .brand { color: var(--cream); }
+.footer-links {
+  display: flex;
+  gap: 1.75rem;
+}
+.footer-links a:hover { color: var(--coral); }
+</style>
+</head>
+<body>
+
+<!-- =====================================================
+     NAV
+     ===================================================== -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <a href="/" class="brand">soch<span class="brand-mark">.</span></a>
+    <div class="nav-links">
+      <a href="#curriculum">Curriculum</a>
+      <a href="#format">Format</a>
+      <a href="#facilitator">Facilitator</a>
+      <a href="#pricing">Pricing</a>
+    </div>
+    <a href="#pricing" class="btn btn-primary nav-cta">Reserve seat <span class="arrow">→</span></a>
+  </div>
+</nav>
+
+<!-- =====================================================
+     HERO
+     ===================================================== -->
+<header class="hero">
+  <div class="container hero-grid">
+    <div>
+      <div class="hero-eyebrow">
+        <span class="dot"></span>
+        <span class="eyebrow" style="color: var(--charcoal-deep)">Soch · Vibe Coding Foundations</span>
+      </div>
+
+      <h1 class="display-1">
+        Stop waiting on developers to build the tool <em>you already know you need.</em>
+      </h1>
+
+      <p class="lede">
+        A one-day workshop for founders and operators with zero coding experience. By 6pm, you'll have shipped a working tool. With AI doing the heavy lifting and an operator showing you the rails.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#pricing" class="btn btn-primary">Reserve your seat <span class="arrow">→</span></a>
+        <a href="#curriculum" class="btn btn-ghost">See the curriculum</a>
+      </div>
+
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span class="icon">●</span>
+          <span><strong>Next cohort:</strong> [COHORT_DATE]</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="icon">●</span>
+          <span><strong>Live online,</strong> 9:00 – 17:00 CET</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="icon">●</span>
+          <span><strong>12 seats</strong> per cohort</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="proof-card proof-card-1">
+        <div><span class="prompt">$</span> python3 contact_form.py</div>
+        <div class="comment"># processing 47 submissions...</div>
+        <div>✓ Sent to Slack</div>
+        <div>✓ Logged to sheet</div>
+        <div>✓ Auto-replied</div>
+      </div>
+      <div class="proof-card proof-card-2">
+        <div class="label">Day one</div>
+        <strong>From "where's my file?" to shipping live.</strong>
+      </div>
+      <div class="proof-card proof-card-3">
+        <p class="display-quote">"You don't need a developer. You need one day."</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- =====================================================
+     PROOF STRIP — built by operators
+     ===================================================== -->
+<section class="proof">
+  <div class="container proof-inner">
+    <div class="proof-label">Run by operators who built and scaled at</div>
+    <div class="proof-logos">
+      <span>Careem</span>
+      <span>Bolt</span>
+      <span>Wise</span>
+      <span>Motive</span>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================
+     PROBLEM
+     ===================================================== -->
+<section class="problem">
+  <div class="container problem-grid">
+    <div>
+      <div class="problem-stat">3+</div>
+      <p class="problem-stat-label">Average weeks a founder waits for IT to build them a basic internal tool.</p>
+    </div>
+    <div class="problem-copy">
+      <p>You have an idea. A form. A dashboard. A workflow that should take five seconds instead of fifty.</p>
+      <p>You ping a developer. Two weeks of back-and-forth. A demo that's wrong. Another two weeks. Maybe it ships. Maybe it doesn't.</p>
+      <p>Meanwhile, the problem you wanted to solve has changed twice.</p>
+      <p>You are the bottleneck. Your dependency is the bottleneck.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================
+     AUDIENCE — for / not for
+     ===================================================== -->
+<section class="audience">
+  <div class="container">
+    <h2 class="display-2">Built for operators. <em>Not for everyone.</em></h2>
+    <div class="audience-grid">
+      <div class="audience-col for">
+        <h3><span>●</span> This is for you if</h3>
+        <ul class="audience-list">
+          <li><span class="mark">→</span><span>You're a founder, ops lead, PM, or marketer who sees problems daily and wants the tools to solve them.</span></li>
+          <li><span class="mark">→</span><span>You've tried no-code tools and hit the ceiling.</span></li>
+          <li><span class="mark">→</span><span>You've watched ChatGPT write code and wondered why you can't get it to actually run.</span></li>
+          <li><span class="mark">→</span><span>You want a foundation strong enough to keep building after we're done.</span></li>
+          <li><span class="mark">→</span><span>You're comfortable being a beginner for a day.</span></li>
+        </ul>
+      </div>
+      <div class="audience-col notfor">
+        <h3><span>●</span> This isn't for you if</h3>
+        <ul class="audience-list">
+          <li><span class="mark">×</span><span>You already know what a Terminal, a Git push, and an env variable are.</span></li>
+          <li><span class="mark">×</span><span>You're looking for a CS degree replacement.</span></li>
+          <li><span class="mark">×</span><span>You want to ship to App Store on day two.</span></li>
+          <li><span class="mark">×</span><span>You'd rather hire a developer than become slightly dangerous yourself.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================
+     BUILD — what you'll walk away with
+     ===================================================== -->
+<section class="build">
+  <div class="container">
+    <div class="build-header">
+      <div class="eyebrow">What you'll walk away with</div>
+      <h2 class="display-2">Five capabilities. <em>Permanent.</em></h2>
+    </div>
+
+    <div class="build-grid">
+      <div class="build-card">
+        <span class="build-num">01</span>
+        <h3>A machine that can actually build</h3>
+        <p>Python, Node, Git, GitHub CLI, VS Code — all installed, configured, and working. No more "command not found."</p>
+        <div class="modules">Module 0–1</div>
+      </div>
+      <div class="build-card">
+        <span class="build-num">02</span>
+        <h3>The Terminal, demystified</h3>
+        <p>You'll move around your computer with words. Stop being scared of the black window. Start using it as a superpower.</p>
+        <div class="modules">Module 3</div>
+      </div>
+      <div class="build-card">
+        <span class="build-num">03</span>
+        <h3>Real Python that does real things</h3>
+        <p>Variables, functions, loops, packages. Read code AI gives you and know what's happening. Modify it without breaking it.</p>
+        <div class="modules">Module 4–5, 7</div>
+      </div>
+      <div class="build-card">
+        <span class="build-num">04</span>
+        <h3>Git and GitHub, no panic</h3>
+        <p>Save your work, recover from mistakes, push to GitHub, and never lose a project to a bad save again.</p>
+        <div class="modules">Module 6</div>
+      </div>
+      <div class="build-card">
+        <span class="build-num">05</span>
+        <h3>The mental model of how the web works</h3>
+        <p>Frontend, backend, databases, deploy. The vocabulary you need to talk to AI — and to actual developers — without flinching.</p>
+        <div class="modules">Module 8</div>
+      </div>
+      <div class="build-card">
+        <span class="build-num">06</span>
+        <h3>A live deployed project</h3>
+        <p>Your name on a URL. Pushed to GitHub. Deployed on Vercel. Yours forever as proof of what you can do.</p>
+        <div class="modules">Module 9</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================
+     CURRICULUM
+     ===================================================== -->
+<section class="curriculum" id="curriculum">
+  <div class="container">
+    <div class="curriculum-header">
+      <h2 class="display-2">The curriculum, <em>in plain English.</em></h2>
+      <p>Nine modules. Sequenced so the next one always builds on the last. No detours, no theory dumps, no "we'll come back to that later."</p>
+    </div>
+
+    <ol class="curriculum-list">
+      <li class="module">
+        <span class="module-num">00</span>
+        <div class="module-content">
+          <h3>The three worlds: editor, terminal, AI</h3>
+          <p>The mental model that makes everything else click. Five minutes that save you a week of confusion.</p>
+        </div>
+        <span class="module-tag">15 min</span>
+      </li>
+      <li class="module">
+        <span class="module-num">01</span>
+        <div class="module-content">
+          <h3>The big install</h3>
+          <p>Mac and Windows paths run side-by-side. Homebrew, Python, Node, Git, GitHub CLI, VS Code. Everything on the machine before we explain a single thing.</p>
+        </div>
+        <span class="module-tag">60 min</span>
+      </li>
+      <li class="module">
+        <span class="module-num">02</span>
+        <div class="module-content">
+          <h3>What did we just install?</h3>
+          <p>Now that it works, what is each piece for? PATH explained. python vs python3. The reason any of this matters.</p>
+        </div>
+        <span class="module-tag">25 min</span>
+      </li>
+      <li class="module">
+        <span class="module-num">03</span>
+        <div class="module-content">
+          <h3>The terminal</h3>
+          <p>Lobby vs office. cd, ls, pwd, mkdir. The parent folder trick that saves your sanity. The five commands you'll use forever.</p>
+        </div>
+        <span class="module-tag">40 min</span>
+      </li>
+      <li class="module">
+        <span class="module-num">04</span>
+        <div class="module-content">
+          <h3>Your first Python file</h3>
+          <p>Write it. Save it. Run it. The white circle that means you forgot to save. The errors that look scary and aren't.</p>
+        </div>
+        <span class="module-tag">30 min</span>
+      </li>
+      <li class="module">
+        <span class="module-num">05</span>
+        <div class="module-content">
+          <h3>Packages: pip and npm</h3>
+          <p>Why you don't write everything from scratch. How to install someone else's code. The two commands that unlock 90% of Python and Node.</p>
+        </div>
+        <span class="module-tag">30 min</span>
+      </li>
+      <li class="module">
+        <span class="module-num">06</span>
+        <div class="module-content">
+          <h3>Git and GitHub</h3>
+          <p>Seven words of vocabulary. Three commands you'll repeat forever. Saving your work like a professional from day one.</p>
+        </div>
+        <span class="module-tag">45 min</span>
+      </li>
+      <li class="module">
+        <span class="module-num">07</span>
+        <div class="module-content">
+          <h3>Python fundamentals</h3>
+          <p>Variables, functions, loops, lists, dicts. Enough to read 90% of what AI writes for you and modify it without fear.</p>
+        </div>
+        <span class="module-tag">75 min</span>
+      </li>
+      <li class="module">
+        <span class="module-num">08</span>
+        <div class="module-content">
+          <h3>How the web actually works</h3>
+          <p>Frontend, backend, database. HTML/CSS/JS, React, Flask, Supabase. The map of the territory you've been navigating blind.</p>
+        </div>
+        <span class="module-tag">45 min</span>
+      </li>
+      <li class="module">
+        <span class="module-num">09</span>
+        <div class="module-content">
+          <h3>Ship it: your first deploy</h3>
+          <p>Push to GitHub. Deploy to Vercel. Get a real URL. Send it to your mum. Or your investors.</p>
+        </div>
+        <span class="module-tag">40 min</span>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- =====================================================
+     FORMAT
+     ===================================================== -->
+<section class="format" id="format">
+  <div class="container">
+    <div class="format-grid">
+      <div>
+        <div class="eyebrow" style="margin-bottom: 1rem;">Format</div>
+        <h2 class="display-2" style="margin-bottom: 1.5rem;">A serious cohort. Not a webinar.</h2>
+        <p class="lede">Twelve seats. One day. Live with Riz. Real installs on real machines, with real errors solved in real time. The format is built for the actual messy reality of getting set up — not for a polished demo.</p>
+      </div>
+
+      <div class="format-card">
+        <div class="label">What's included</div>
+        <h3>Everything you need to ship.</h3>
+        <ul class="format-list">
+          <li>One full day live on Zoom (9:00–17:00 CET) with Riz running the room</li>
+          <li>Comprehensive 9-module workshop manual you keep forever</li>
+          <li>Pre-workshop setup checklist sent 48 hours before</li>
+          <li>Private cohort Slack for the day-of and 7 days after</li>
+          <li>Recording of the full day (yours to keep)</li>
+          <li>Templates and starter projects for your first three builds</li>
+          <li>One 30-minute 1:1 follow-up with Riz in the two weeks after</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================
+     FACILITATOR
+     ===================================================== -->
+<section class="facilitator" id="facilitator">
+  <div class="container facilitator-grid">
+    <div>
+      <!-- HANDOFF NOTE: Replace the styled placeholder with Riz's real photo -->
+      <div class="facilitator-portrait" aria-label="Portrait of Riz"></div>
+    </div>
+    <div>
+      <div class="eyebrow" style="margin-bottom: 1rem;">Your facilitator</div>
+      <h2 class="facilitator-name">Riz</h2>
+      <div class="facilitator-title">Co-founder, Soch</div>
+
+      <div class="facilitator-bio">
+        <p><em>"I built and shipped a hand-tracking arcade game in the browser. With zero prior coding experience. Using AI."</em></p>
+        <p>I'm not a developer. I'm an operator. I spent a decade leading operations at Careem, Bolt, Motive, and Wise — building processes, not product. Then AI changed what an operator can ship alone, and I started building.</p>
+        <p>This workshop is the foundation I wish someone had given me. Not theory. Not "learn to code." The practical, ground-level setup that turns AI from a chatbot you talk to into a co-builder you ship with.</p>
+        <p>If I can do this, you can. The gap is one day of foundation.</p>
+      </div>
+
+      <div class="facilitator-credits">
+        <span class="credit-pill">University of Cambridge</span>
+        <span class="credit-pill">ACCA</span>
+        <span class="credit-pill">Ex-Careem</span>
+        <span class="credit-pill">Ex-Bolt</span>
+        <span class="credit-pill">Ex-Wise</span>
+        <span class="credit-pill">Ex-Motive</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================
+     PRICING
+     ===================================================== -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="pricing-header">
+      <div class="eyebrow">Pricing</div>
+      <h2 class="display-2">One day. <em>Permanent capability.</em></h2>
+      <p>Two ways in. The earlier you commit, the less it costs.</p>
+    </div>
+
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-tier">Standard</div>
+        <div class="price-amount"><span class="currency">€</span>895</div>
+        <div class="price-meta">Per seat · VAT exclusive</div>
+        <ul class="price-includes">
+          <li>Full one-day live cohort</li>
+          <li>Workshop manual (yours forever)</li>
+          <li>Cohort Slack — 7 days post</li>
+          <li>Day-of recording</li>
+          <li>Starter templates</li>
+        </ul>
+        <a href="[APPLY_LINK]" class="btn btn-ghost">Reserve standard seat</a>
+      </div>
+
+      <div class="price-card featured">
+        <div class="price-badge">Early bird</div>
+        <div class="price-tier">First 6 seats</div>
+        <div class="price-amount"><span class="currency">€</span>795</div>
+        <div class="price-meta">Per seat · VAT exclusive · €100 off</div>
+        <ul class="price-includes">
+          <li>Everything in Standard</li>
+          <li><strong>Plus</strong> 30-min 1:1 with Riz</li>
+          <li><strong>Plus</strong> early access to recording</li>
+          <li><strong>Plus</strong> first dibs on next cohort</li>
+        </ul>
+        <a href="[APPLY_LINK]" class="btn btn-primary">Reserve early bird <span class="arrow">→</span></a>
+      </div>
+    </div>
+
+    <p class="pricing-footnote">
+      Booking for a team of 3+? <a href="mailto:riz@withsoch.com">Email us about team pricing.</a>
+      <br>
+      Most participants expense this through L&D. <a href="mailto:riz@withsoch.com">Ask for an invoice.</a>
+    </p>
+  </div>
+</section>
+
+<!-- =====================================================
+     FAQ
+     ===================================================== -->
+<section class="faq">
+  <div class="container faq-grid">
+    <div>
+      <div class="eyebrow" style="margin-bottom: 1rem;">FAQ</div>
+      <h2 class="display-2">Honest answers <em>to the real questions.</em></h2>
+    </div>
+
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary class="faq-q">Do I need any coding background?</summary>
+        <div class="faq-a">
+          <p>Zero. The workshop is built for someone who has never opened a Terminal, never written a line of code, and gets nervous when they see a black screen with white text. The first three modules assume you know nothing.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-q">What do I need to bring?</summary>
+        <div class="faq-a">
+          <p>A laptop (Mac or Windows — both supported), at least 5GB of free disk space, and admin/install permissions on the machine. We send a pre-workshop checklist 48 hours before so you arrive ready to go.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-q">What if I get stuck during the day?</summary>
+        <div class="faq-a">
+          <p>Cohort size is capped at 12 specifically so this doesn't happen. Riz works the room live, debugging in real time. Most "stuck" moments are predictable — they're already addressed in the manual's Emergency Troubleshooting Map.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-q">Mac or Windows — does it matter?</summary>
+        <div class="faq-a">
+          <p>Both work. The manual and the live workshop run Mac and Windows paths in parallel. We split into breakouts when OS-specific issues come up so neither group waits on the other.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-q">What happens after the workshop ends?</summary>
+        <div class="faq-a">
+          <p>The cohort Slack stays open for 7 days for follow-up questions. Early bird seats get a 30-minute 1:1 with Riz in the two weeks following. The manual is yours forever — it's designed to be a reference you come back to, not a notebook you lose.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-q">Can I expense this through work?</summary>
+        <div class="faq-a">
+          <p>Most participants do. We issue a proper VAT invoice from our Estonian entity. Many L&D budgets cover this directly. Email <a href="mailto:riz@withsoch.com" style="color: var(--coral); text-decoration: underline;">riz@withsoch.com</a> if you need a pre-payment quote for procurement.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-q">What's the refund policy?</summary>
+        <div class="faq-a">
+          <p>Full refund up to 7 days before the cohort starts. After that, you can transfer your seat to the next cohort or send a colleague in your place. We don't refund within 7 days because we've already capped seats and turned other people away.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-q">What's the difference between this and a YouTube tutorial?</summary>
+        <div class="faq-a">
+          <p>YouTube tutorials work fine until something breaks. Then you spend an hour Googling the error and quit. The whole point of a live cohort is that someone is there when reality hits — and reality hits constantly when you're setting up a dev environment for the first time.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================
+     FINAL CTA
+     ===================================================== -->
+<section class="final-cta">
+  <div class="container">
+    <h2 class="display-1">Stop talking about it. <em>Build it.</em></h2>
+    <p>Twelve seats per cohort. Next one starts [COHORT_DATE]. Reserve yours before early bird closes.</p>
+    <a href="[APPLY_LINK]" class="btn btn-primary">Reserve your seat <span class="arrow">→</span></a>
+  </div>
+</section>
+
+<!-- =====================================================
+     FOOTER
+     ===================================================== -->
+<footer class="footer">
+  <div class="container footer-inner">
+    <div>
+      <div class="brand">soch<span class="brand-mark" style="color: var(--coral);">.</span></div>
+      <div style="margin-top: 0.4rem; font-size: 0.82rem; opacity: 0.6;">Operations as a service for early-stage startups.</div>
+    </div>
+    <div class="footer-links">
+      <a href="https://withsoch.com">withsoch.com</a>
+      <a href="mailto:riz@withsoch.com">riz@withsoch.com</a>
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
