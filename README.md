@@ -17,3 +17,5 @@ https://consult-with-riz.github.io/riz-lived-experiences/riz_day_in_the_life_apr
 https://consult-with-riz.github.io/riz-lived-experiences/Riz-Contact
 
 https://consult-with-riz.github.io/riz-lived-experiences/riz-website.html
+
+https://consult-with-riz.github.io/riz-lived-experiences/AI-Workshop-Draft-1.html
