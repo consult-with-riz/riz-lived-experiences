@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Riz — terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#22332C; --cream:#F3ECDD; --body:#4A4A4A; --muted:#8A857B;
+    --coral:#EA6A47; --coral-d:#CE5430; --amber:#D79A36; --line:#E7E0D2;
+    --bg:#0b1310; --term:#0e1714;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"DM Mono",monospace;background:var(--bg);color:#cfe8da;min-height:100vh;
+      display:flex;align-items:center;justify-content:center;padding:24px}
+  .serif{font-family:"Playfair Display",Georgia,serif}
+  .term{width:100%;max-width:740px;background:var(--term);border:1px solid rgba(207,232,218,.14);border-radius:14px;
+      box-shadow:0 30px 80px rgba(0,0,0,.5);overflow:hidden}
+  .bar{display:flex;align-items:center;gap:8px;padding:13px 16px;border-bottom:1px solid rgba(207,232,218,.1);background:rgba(0,0,0,.18)}
+  .dot{width:11px;height:11px;border-radius:50%}
+  .dot.r{background:#EA6A47}.dot.y{background:#D79A36}.dot.g{background:#5fae8a}
+  .bar .path{margin-left:10px;font-size:.74rem;color:rgba(207,232,218,.4);letter-spacing:.04em}
+  .screen{padding:24px 20px;min-height:360px;max-height:64vh;overflow-y:auto;font-size:.92rem;line-height:1.7}
+  .line{white-space:pre-wrap;word-break:break-word}
+  .prompt{color:var(--coral)}
+  .you{color:#cfe8da}
+  .ans{color:rgba(207,232,218,.92)}
+  .ans .hl{color:var(--amber)}
+  .ans .k{color:var(--coral)}
+  .ans a{color:var(--amber);text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+  .muted{color:rgba(207,232,218,.45)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:4px 18px;margin:2px 0}
+  .grid span{color:var(--amber)}
+  .inputrow{display:flex;align-items:center;padding:14px 20px;border-top:1px solid rgba(207,232,218,.1);gap:8px}
+  .inputrow .ps{color:var(--coral)}
+  #cmd{flex:1;background:transparent;border:none;outline:none;color:#cfe8da;font-family:"DM Mono",monospace;font-size:.92rem}
+  #cmd::placeholder{color:rgba(207,232,218,.32)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;padding:0 20px 18px}
+  .chip{font-size:.72rem;color:rgba(207,232,218,.6);border:1px solid rgba(207,232,218,.18);border-radius:999px;
+      padding:6px 12px;cursor:pointer;transition:all .2s}
+  .chip:hover{border-color:var(--coral);color:var(--coral)}
+</style>
+</head>
+<body>
+<div class="term">
+  <div class="bar">
+    <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+    <span class="path">riz@operator — ~/whoami</span>
+  </div>
+  <div class="screen" id="screen"></div>
+  <div class="chips" id="chips"></div>
+  <div class="inputrow">
+    <span class="ps">&rsaquo;</span>
+    <input id="cmd" autocomplete="off" spellcheck="false" placeholder="type a command, or 'help'  ·  ↑ history  ·  tab to complete" />
+  </div>
+</div>
+<script>
+(function(){
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var screen=document.getElementById('screen');
+  var cmd=document.getElementById('cmd');
+  var chipsWrap=document.getElementById('chips');
+
+  // =========================================================================
+  // KNOWLEDGE BASE  —  the "backend", built from Riz's CV + LinkedIn
+  // Each command returns an array of lines. <span class="hl"> = amber accent,
+  // <span class="k"> = coral keyword, <a data-cmd="x"> = clickable next command,
+  // <a data-link="url"> = external link.
+  // =========================================================================
+  var KB={
+    whoami:[
+      'Riz (Rizwan Mahmood). Operator, not an agency brochure.',
+      'A decade building operations at <span class="hl">Wise, Bolt, Careem, Motive</span> — rollouts across 20+ countries, 3 continents.',
+      'Now co-founder of <span class="hl">Soch</span>: AI workflow automation for pre-seed to Series A.',
+      'Cambridge. Oxford Brookes. ACCA. Based in Tallinn. Also a stand-up — so I keep it short.',
+      'Try <a data-cmd="work">work</a>, <a data-cmd="wins">wins</a>, or <a data-cmd="ls">ls</a> for everything.'
+    ],
+    soch:[
+      '<span class="k">Soch</span> — AI workflow automation agency. Co-founder, June 2025 → now.',
+      'We find the 10–20 hours a week your team loses to manual work, and build the systems that replace them. Usually within <span class="hl">60 days</span>.',
+      'We embed as operators, not consultants. No slide decks — we build the actual road.',
+      'Stack: <span class="hl">n8n · Make · Zapier · Airtable · Anthropic · OpenAI</span>. We standardise on Claude for judgment-heavy steps.',
+      'Anthropic Partner Network member. See <a data-cmd="clients">clients</a> or get a free audit: <a data-link="https://withsoch.com/ai-ops-score">withsoch.com/ai-ops-score</a>.'
+    ],
+    wise:[
+      '<span class="k">Wise</span> — Finance Implementation PM (May → Nov 2025). Fintech, LSE-listed.',
+      'Built bank/scheme auto-reconciliation + exception tooling: <span class="hl">~92% straight-through matching</span>.',
+      'Cut month-end close from <span class="hl">~8 days to ~3</span>; manual journals down ~65%.',
+      'Integrated 12+ products and 13+ market launches into finance systems — compliant ops in 70+ countries.',
+      'IFRS-aligned revenue recognition; VAT/GST into the data pipeline; analyst time down ~30%.'
+    ],
+    bolt:[
+      '<span class="k">Bolt</span> — Oct 2021 → May 2025 (~3 yrs 10 mo). Ridehailing unicorn.',
+      'Courier cost from <span class="hl">21% → 14% of GMV — saving $3.9M</span> in 6 months, across 20 countries.',
+      'A/B-tested delivery fees: <span class="hl">+$2.1M</span> in 6 months. Courier efficiency +12%.',
+      'EU Workers\u2019 Directive: 80%+ compliance, built an admin tool + 2 microservices, manual effort \u201370%.',
+      'Global Manager, Operational Excellence across 15 countries.',
+      'And yes — <span class="hl">fired by Bolt</span>. Won the dispute at the Estonian Labour Dispute Committee, with compensation. I put it on my LinkedIn headline on purpose.'
+    ],
+    careem:[
+      '<span class="k">Careem</span> — Oct 2018 → Sep 2020. Ridehailing unicorn (later Uber).',
+      'Country Ops Lead (Delivery) + City Lead (Ridehailing).',
+      'Launched a Health Care Service with the Ministry of Health KPK, Pakistan — <span class="hl">dispatch time 3 minutes → 20 seconds</span>.'
+    ],
+    motive:[
+      '<span class="k">Motive</span> (ex-KeepTruckin) — Corporate Strategy, Special Projects (2020–21).',
+      'Project-managed the Canadian market expansion end to end: lead gen, legal certification, website, marketing assets, sales enablement.',
+      'Shipped a certified ELD solution for that market.'
+    ],
+    sp:[
+      '<span class="k">S&P Global Market Intelligence</span> — 2016 → 2018. Fortune 500 financial services.',
+      'Client Operations + Product Operations, Insurance. Where the finance discipline got drilled in.'
+    ],
+    wins:[
+      'The greatest hits, by the numbers:',
+      '<span class="hl">$3.9M</span> saved — courier cost 21%→14% of GMV (Bolt)',
+      '<span class="hl">+$2.1M</span> — A/B-tested delivery fees (Bolt)',
+      '<span class="hl">92%</span> straight-through matching — reconciliation automation (Wise)',
+      '<span class="hl">8→3 days</span> — month-end close (Wise)',
+      '<span class="hl">3 min → 20 sec</span> — emergency dispatch time (Careem)',
+      'Drill in: <a data-cmd="bolt">bolt</a> · <a data-cmd="wise">wise</a> · <a data-cmd="careem">careem</a>'
+    ],
+    stack:[
+      'What I build with:',
+      'Automation: <span class="hl">n8n · Make · Zapier</span>',
+      'Data/glue: <span class="hl">Airtable · G-Suite · SQL</span>',
+      'AI: <span class="hl">Anthropic (Claude) · OpenAI · Gemini · Perplexity</span>',
+      'Media: HeyGen · ElevenLabs',
+      'We standardise on Claude — strongest reasoning for qualification, classification and decisioning.'
+    ],
+    clients:[
+      'Soch has shipped for founders in fintech, health, logistics and B2B SaaS (US, UK, Australia):',
+      '<span class="hl">Shaping Wealth · Byzantine Finance · Contract Diagnostics · GIMBHI Ventures · Cycle Together</span> — and others.'
+    ],
+    why:[
+      'The thesis: <span class="hl">AI doesn\u2019t fix bad thinking. It scales it.</span>',
+      'So I get the workflow right first — then make it run without you.',
+      'Right now, somewhere on your team, your best person is doing your worst work. That\u2019s not a hiring problem. It\u2019s a workflow problem.'
+    ],
+    pricing:[
+      'Consulting & coaching: from <span class="hl">$160/hr</span>.',
+      'Full builds run through my team at Soch — scoped per project.',
+      'You\u2019ll always know the number before we start. <a data-cmd="contact">contact</a> to talk.'
+    ],
+    education:[
+      '<span class="hl">University of Cambridge</span> (2009–2013)',
+      '<span class="hl">Oxford Brookes</span> — BSc Applied Accounting, Upper Second (2014–2017)',
+      '<span class="hl">ACCA</span> Affiliate (2014–2016)'
+    ],
+    contact:[
+      'Easiest: <a data-link="https://withsoch.com/ai-ops-score">free AI audit @ withsoch.com/ai-ops-score</a>',
+      'Email: <span class="hl">riz@withsoch.com</span>',
+      'LinkedIn: <a data-link="https://www.linkedin.com/in/consult-withriz">/in/consult-withriz</a>',
+      'Writing: <a data-link="https://conversationswithriz.substack.com">Substack</a> · Video: <a data-link="https://youtube.com/@VibeWithRiz">YouTube</a>'
+    ],
+    extra:[
+      'Off the clock: stand-up comedy, a podcast, Yin yoga, meditation.',
+      'Once ran a fashion label (Perbal Clothing, 2015–17). Invests in US stocks + crypto.',
+      'Translation: I get small businesses because I\u2019ve been one.'
+    ]
+  };
+
+  // command aliases -> KB key
+  var ALIAS={
+    'whoami':'whoami','who':'whoami','about':'whoami','riz':'whoami','bio':'whoami',
+    'soch':'soch','company':'soch','agency':'soch',
+    'wise':'wise','bolt':'bolt','careem':'careem','motive':'motive','sp':'sp','s&p':'sp','snp':'sp',
+    'wins':'wins','results':'wins','impact':'wins','metrics':'wins','numbers':'wins',
+    'stack':'stack','tools':'stack','tech':'stack',
+    'clients':'clients','customers':'clients',
+    'why':'why','philosophy':'why','thesis':'why',
+    'pricing':'pricing','price':'pricing','cost':'pricing','rates':'pricing',
+    'education':'education','school':'education','degree':'education',
+    'contact':'contact','email':'contact','hire':'contact','book':'contact','reach':'contact',
+    'extra':'extra','fun':'extra','hobbies':'extra','personal':'extra'
+  };
+
+  // ordered CV menu for the pickable `cv` command
+  var CV_MENU=[
+    {label:'Soch — co-founder, AI automation', cmd:'soch'},
+    {label:'Wise — Finance Implementation PM', cmd:'wise'},
+    {label:'Bolt — Operational Excellence', cmd:'bolt'},
+    {label:'Careem — Country Ops Lead', cmd:'careem'},
+    {label:'Motive — Corporate Strategy', cmd:'motive'},
+    {label:'S&P Global — Product Ops', cmd:'sp'},
+    {label:'Education — Cambridge, Oxford Brookes, ACCA', cmd:'education'},
+    {label:'The numbers — biggest wins', cmd:'wins'}
+  ];
+  var lastMenu=null; // holds CV_MENU when shown, so a bare number expands it
+
+  var TOPICS=['whoami','work','cv','wins','soch','wise','bolt','careem','motive','sp','stack','clients','why','pricing','education','contact','extra','help','clear'];
+
+  function helpLines(){
+    return ['Commands you can type:',
+      '<span class="grid">'+['<span>whoami</span>','<span>work</span>','<span>cv</span>','<span>wins</span>','<span>soch</span>','<span>stack</span>','<span>clients</span>','<span>why</span>','<span>pricing</span>','<span>contact</span>'].join('')+'</span>',
+      'Companies: <a data-cmd="wise">wise</a> · <a data-cmd="bolt">bolt</a> · <a data-cmd="careem">careem</a> · <a data-cmd="motive">motive</a> · <a data-cmd="sp">sp</a>',
+      'Or type <a data-cmd="cv">cv</a> and pick a number. <span class="muted">(clear to reset)</span>'
+    ];
+  }
+  function workLines(){
+    return ['Timeline — most recent first:',
+      '<span class="hl">2025→</span>  Soch — co-founder',
+      '<span class="hl">2025</span>   Wise — Finance Implementation PM',
+      '<span class="hl">2021–25</span> Bolt — Operational Excellence / Courier Ops',
+      '<span class="hl">2020–21</span> Motive — Corporate Strategy',
+      '<span class="hl">2018–20</span> Careem — Country / City Lead',
+      '<span class="hl">2016–18</span> S&P Global — Client / Product Ops',
+      'Pick one to drill in, or type <a data-cmd="cv">cv</a>.'
+    ];
+  }
+  function cvMenuLines(){
+    lastMenu=CV_MENU;
+    var out=['Pick a number to expand:'];
+    CV_MENU.forEach(function(m,i){ out.push('  <span class="hl">'+(i+1)+'</span>  <a data-cmd="'+m.cmd+'">'+m.label+'</a>'); });
+    out.push('<span class="muted">type 1–'+CV_MENU.length+', or any command</span>');
+    return out;
+  }
+
+  // router: returns {lines:[...], action?:'clear'}
+  function route(raw){
+    var q=raw.toLowerCase().trim();
+    if(!q) return {lines:['(type <a data-cmd="help">help</a> to see what I can answer)']};
+    if(q==='clear'||q==='cls') return {action:'clear'};
+    if(q==='help'||q==='?'||q==='ls'||q==='menu') return {lines:helpLines()};
+    if(q==='work'||q==='experience'||q==='cv --jobs'||q==='jobs') return {lines:workLines()};
+    if(q==='cv'||q==='resume') return {lines:cvMenuLines()};
+
+    // bare number expands the last menu
+    if(/^\d+$/.test(q) && lastMenu){
+      var n=parseInt(q,10);
+      if(n>=1 && n<=lastMenu.length){ var key=lastMenu[n-1].cmd; lastMenu=null; return {lines:KB[ALIAS[key]||key]}; }
+    }
+    // direct command / alias
+    if(ALIAS[q]) return {lines:KB[ALIAS[q]]};
+    // first-word match (e.g. "tell me about bolt")
+    var hit=null;
+    Object.keys(ALIAS).forEach(function(k){ if(!hit && q.indexOf(k)>=0 && k.length>2) hit=k; });
+    if(hit) return {lines:KB[ALIAS[hit]]};
+    // fuzzy intent
+    if(/price|cost|charge|rate|fee|\$/.test(q)) return {lines:KB.pricing};
+    if(/do you do|build|offer|service|what.*soch/.test(q)) return {lines:KB.soch};
+    if(/why|scale|think/.test(q)) return {lines:KB.why};
+    if(/contact|reach|hire|talk|call/.test(q)) return {lines:KB.contact};
+    // unknown
+    return {lines:['Haven\u2019t scripted <span class="k">'+escapeHtml(raw)+'</span>.',
+                   'Type <a data-cmd="help">help</a> for what I can answer — or <a data-cmd="cv">cv</a> to browse my career.']};
+  }
+  function escapeHtml(s){ return s.replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}); }
+
+  // =========================================================================
+  // terminal plumbing
+  // =========================================================================
+  function addLine(html,cls){ var d=document.createElement('div'); d.className='line '+(cls||''); d.innerHTML=html; screen.appendChild(d); screen.scrollTop=screen.scrollHeight; return d; }
+  function wait(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
+  function typeLine(html,cls,speed){
+    return new Promise(function(res){
+      var d=addLine('',cls);
+      if(reduce){ d.innerHTML=html; res(); return; }
+      var plain=html.replace(/<[^>]+>/g,''); var i=0;
+      var iv=setInterval(function(){ i++; d.textContent=plain.slice(0,i); screen.scrollTop=screen.scrollHeight;
+        if(i>=plain.length){ clearInterval(iv); d.innerHTML=html; bindLinks(d); res(); } }, speed||14);
+    });
+  }
+  function bindLinks(scope){
+    scope.querySelectorAll('a[data-cmd]').forEach(function(a){ a.addEventListener('click',function(){ runCommand(a.getAttribute('data-cmd')); }); });
+    scope.querySelectorAll('a[data-link]').forEach(function(a){ a.addEventListener('click',function(){ window.open(a.getAttribute('data-link'),'_blank'); }); });
+  }
+
+  var history=[], hPtr=-1, busy=false;
+  async function runCommand(raw){
+    if(busy) return; busy=true;
+    if(raw && (history.length===0 || history[history.length-1]!==raw)) history.push(raw);
+    hPtr=history.length;
+    addLine('<span class="prompt">&rsaquo;</span> <span class="you">'+escapeHtml(raw)+'</span>');
+    var r=route(raw);
+    if(r.action==='clear'){ screen.innerHTML=''; busy=false; cmd.focus(); return; }
+    for(var i=0;i<r.lines.length;i++){ await typeLine(r.lines[i],'ans'); await wait(70); }
+    addLine('&nbsp;');
+    busy=false; cmd.focus();
+  }
+
+  // chips
+  ['work','wins','soch','pricing','contact','cv'].forEach(function(c){
+    var b=document.createElement('button'); b.className='chip'; b.textContent=c;
+    b.addEventListener('click',function(){ runCommand(c); }); chipsWrap.appendChild(b);
+  });
+
+  // input: enter / history / tab-complete
+  cmd.addEventListener('keydown',function(e){
+    if(e.key==='Enter' && cmd.value.trim()){ var v=cmd.value; cmd.value=''; runCommand(v); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); if(history.length){ hPtr=Math.max(0,hPtr-1); cmd.value=history[hPtr]||''; } }
+    else if(e.key==='ArrowDown'){ e.preventDefault(); if(history.length){ hPtr=Math.min(history.length,hPtr+1); cmd.value=history[hPtr]||''; } }
+    else if(e.key==='Tab'){ e.preventDefault(); var p=cmd.value.toLowerCase().trim(); if(p){ var m=TOPICS.filter(function(t){return t.indexOf(p)===0;}); if(m.length) cmd.value=m[0]; } }
+  });
+
+  // intro: types itself, then hands over
+  async function intro(){
+    await wait(350);
+    await typeLine('riz@operator — booting knowledge base…','muted',22);
+    await wait(150);
+    await typeLine('loaded: 6 roles · 5 wins · 1 thesis. ready.','muted',16);
+    addLine('&nbsp;');
+    addLine('<span class="prompt">&rsaquo;</span> <span class="you">whoami</span>');
+    for(var i=0;i<KB.whoami.length;i++){ await typeLine(KB.whoami[i],'ans'); await wait(70); }
+    addLine('&nbsp;');
+    addLine('<span class="muted">your turn — type a command, <a data-cmd="help">help</a>, or tap a chip.</span>');
+    bindLinks(screen);
+    cmd.focus();
+  }
+  intro();
+})();
+</script>
+</body>
+</html>
