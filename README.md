@@ -18,4 +18,4 @@ https://consult-with-riz.github.io/riz-lived-experiences/riz-website.html
 
 https://consult-with-riz.github.io/riz-lived-experiences/AI-Workshop-Draft-1.html
 
-https://consult-with-riz.github.io/ask-riz.html
+https://consult-with-riz.github.io/riz-lived-experiences/ask-riz.html
